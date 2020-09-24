@@ -4,19 +4,30 @@ import {Command} from "commander";
 const app = new App();
 const program = new Command('ltag');
 
-program.command('add <target>')
-  .requiredOption('-t, --tag <tag...>', 'The tag')
+function getArgs(firstArg: string, restArgs?:string[]) {
+  const allArgs = [firstArg];
+  if (restArgs) {
+    allArgs.push(...restArgs);
+  }
+
+  return allArgs;
+}
+
+program.command('add <...tag>')
+  .requiredOption('-i, --item <item>', 'The item to tag')
   .option('-v, --verbose')
-  .action(async (target, cmdObj) => {
+  .action(async (firstTag, cmdObj, restTagList) => {
     app.setVerbose(cmdObj.verbose);
-    await app.addTag(target, cmdObj.tag)
+
+    await app.addTag(cmdObj.item, getArgs(firstTag, restTagList))
   });
 
-program.command('list <target>')
+program.command('list')
   .option('-v, --verbose')
-  .action(async (target, cmdObj) => {
+  .requiredOption('-i, --item <item>', 'The item to list the tags for')
+  .action(async (cmdObj) => {
     app.setVerbose(cmdObj.verbose);
-    await app.listTagsForTarget(target);
+    await app.listTagsForTarget(cmdObj.item);
   });
 
 program.command('find <...tag>')
@@ -27,7 +38,15 @@ program.command('find <...tag>')
     if (restTagList) {
       tagsToFind.push(...restTagList);
     }
-    await app.findMatchingTags(...tagsToFind);
+    await app.findMatchingTags(tagsToFind);
+  });
+
+program.command('remove <...tag>')
+  .option('-v, --verbose')
+  .requiredOption('-i, --item <item>', 'The item to remove the tags from')
+  .action(async (firstTag, cmdObj, restTagList) => {
+    app.setVerbose(cmdObj.verbose);
+    await app.removeTags(cmdObj.item, getArgs(firstTag, restTagList));
   });
 
 program.parseAsync(process.argv).catch(e => console.log(e));

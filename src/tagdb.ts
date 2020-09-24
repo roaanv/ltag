@@ -51,7 +51,6 @@ export class TagDb {
       let allMatched = true;
       for (let tagToFind of tagsToFind) {
         if (!taggedItem.tagList.includes(tagToFind)) {
-          console.log(`Did not find "${tagToFind}" in "${JSON.stringify(taggedItem.tagList)}"`);
           allMatched = false;
           break;
         }

@@ -50,7 +50,7 @@ export class App {
     console.log(tagsForTarget);
   }
 
-  async findMatchingTags(...tagList: string[]): Promise<void> {
+  async findMatchingTags(tagList: string[]): Promise<void> {
     const foundTags = this.tagDb.findMatchingTargets(...tagList);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
@@ -58,6 +58,11 @@ export class App {
 
     console.log(`Found matches`);
     console.log(JSON.stringify(foundTags, null, 2));
+  }
+
+  async removeTags(item: string, tagList: string[]) {
+    const remainingTags = this.tagDb.removeTags(getFullPath(item), ...tagList);
+    console.log(`Remaining tags: ${remainingTags}`);
   }
 }
 
