@@ -1,6 +1,6 @@
 import path from "path";
 import * as fs from "fs";
-import {TagDb} from "./tagdb";
+import {TagDb, TargetType} from "./tagdb";
 
 function getFullPath(target: string): string {
   return path.resolve(target);
@@ -28,7 +28,18 @@ export class App {
       process.exit(-1);
     }
 
-    const existingTags = this.tagDb.addTags(targetPath, ...tagList);
+    const targetInfo = fs.lstatSync(targetPath);
+    if (!targetInfo.isDirectory() && !targetInfo.isFile()) {
+      console.error(`Cannot handle this type of item`);
+      process.exit(-2);
+
+    }
+    let targetType:TargetType = 'file';
+    if (targetInfo.isDirectory()) {
+      targetType = 'directory';
+    }
+
+    const existingTags = this.tagDb.addTags(targetPath, targetType, ...tagList);
     console.log(`Tags on ${target}`);
     console.log(existingTags);
   }

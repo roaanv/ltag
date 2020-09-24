@@ -1,23 +1,32 @@
 import * as fs from "fs";
 
-export interface ItemRow {
+export type TargetType = 'directory' | 'file';
+
+interface TaggedItem {
+  name: string;
+  itemType: TargetType;
   tagList: string[];
 }
 
-export type ItemList = {[target:string]: ItemRow};
+interface DbSchema {
+  version: number;
+  taggedItems: {[name: string]: TaggedItem};
+}
+
+const SCHEMA_VERSION = 1;
 
 export class TagDb {
-  private data: ItemList = {};
+  private data: DbSchema = {version: SCHEMA_VERSION, taggedItems:{}};
 
   constructor(private dbPath: string) {
     this.load();
   }
 
-  addTags(target: string, ...newTagList:string[]) {
-    let tagsForTarget = this.data[target];
+  addTags(target: string, targetType: TargetType, ...newTagList:string[]) {
+    let tagsForTarget = this.data.taggedItems[target];
     if (!tagsForTarget) {
-      tagsForTarget = {tagList:[]};
-      this.data[target] = tagsForTarget;
+      tagsForTarget = {name: target, itemType: targetType, tagList:[]};
+      this.data.taggedItems[target] = tagsForTarget;
     }
 
     tagsForTarget.tagList = [...new Set([...tagsForTarget.tagList, ...newTagList])]
@@ -27,7 +36,7 @@ export class TagDb {
   }
 
   getTags(target: string): string[] {
-    let tagsForTarget = this.data[target];
+    let tagsForTarget = this.data.taggedItems[target];
     if (!tagsForTarget) {
       return [];
     }
@@ -35,29 +44,29 @@ export class TagDb {
     return tagsForTarget.tagList;
   }
 
-  findMatchingTargets(...tagsToFind: string[]): string[] {
-    const matchingTargets: string[] = [];
+  findMatchingTargets(...tagsToFind: string[]): TaggedItem[] {
+    const matchingItems: TaggedItem[] = [];
 
-    for (let [target, targetTags] of Object.entries(this.data)) {
+    for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
       let allMatched = true;
       for (let tagToFind of tagsToFind) {
-        if (!targetTags.tagList.includes(tagToFind)) {
-          console.log(`Did not find "${tagToFind}" in "${JSON.stringify(targetTags.tagList)}"`);
+        if (!taggedItem.tagList.includes(tagToFind)) {
+          console.log(`Did not find "${tagToFind}" in "${JSON.stringify(taggedItem.tagList)}"`);
           allMatched = false;
           break;
         }
       }
 
       if (allMatched) {
-        matchingTargets.push(target);
+        matchingItems.push(taggedItem);
       }
     }
 
-    return matchingTargets;
+    return matchingItems;
   }
 
   removeTags(target: string, ...tagsToDelete: string[]): string[] {
-    let tagsForTarget = this.data[target];
+    let tagsForTarget = this.data.taggedItems[target];
     if (!tagsForTarget) {
       return [];
     }
@@ -74,19 +83,23 @@ export class TagDb {
 
   private load() {
     if (!fs.existsSync(this.dbPath)) {
-      this.data = {};
+      this.data = {version: SCHEMA_VERSION, taggedItems:{}};
       return;
     }
-    const loadedData:ItemList = JSON.parse(fs.readFileSync(this.dbPath, 'utf8'));
+    const loadedData:DbSchema = JSON.parse(fs.readFileSync(this.dbPath, 'utf8'));
+    if (!loadedData.version || loadedData.version != SCHEMA_VERSION) {
+      throw new Error(`Cannot handle data file of version ${loadedData.version}`);
+    }
 
     // Ensure tags are unique as someone might have
     // edited the physical file
-    for (let target of Object.keys(loadedData)) {
-      const tags = loadedData[target];
-      const uniqueTags:Set<string> = new Set([...tags.tagList]);
-      this.data[target] = {
-        tagList: [...uniqueTags]
-      }
+    const items = loadedData.taggedItems;
+    for (let target of Object.keys(items)) {
+      const taggedItem = items[target];
+      const uniqueTags:Set<string> = new Set([...taggedItem.tagList]);
+      taggedItem.tagList = [...uniqueTags];
     }
+
+    this.data = loadedData;
   }
 }
