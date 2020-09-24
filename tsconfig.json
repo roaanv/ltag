@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict" : true,
+    "module": "commonjs",
+    "target": "es2017",
+    "outDir": "./out",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "lib": ["dom", "es2017"],
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "jest"],
+    "baseUrl": "./",
+    "allowJs": true
+  },
+  "include": ["./src/**/*"]
+}
