@@ -10,6 +10,4 @@ program
     .option('-v, --verbose')
     .action((target, cmdObj) => app.addTag(target, cmdObj.tag, cmdObj.verbose));
 
-// commandLine.execute().catch(e => console.log(e));
-
 program.parseAsync(process.argv).catch(e => console.log(e));
