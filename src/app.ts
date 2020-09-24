@@ -38,5 +38,15 @@ export class App {
     const tagsForTarget = this.tagDb.getTags(targetPath);
     console.log(tagsForTarget);
   }
+
+  async findMatchingTags(...tagList: string[]): Promise<void> {
+    const foundTags = this.tagDb.findMatchingTargets(...tagList);
+    if (!foundTags || foundTags.length == 0) {
+      console.log(`No matches found for tags`);
+    }
+
+    console.log(`Found matches`);
+    console.log(JSON.stringify(foundTags, null, 2));
+  }
 }
 

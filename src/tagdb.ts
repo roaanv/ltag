@@ -35,6 +35,27 @@ export class TagDb {
     return tagsForTarget.tagList;
   }
 
+  findMatchingTargets(...tagsToFind: string[]): string[] {
+    const matchingTargets: string[] = [];
+
+    for (let [target, targetTags] of Object.entries(this.data)) {
+      let allMatched = true;
+      for (let tagToFind of tagsToFind) {
+        if (!targetTags.tagList.includes(tagToFind)) {
+          console.log(`Did not find "${tagToFind}" in "${JSON.stringify(targetTags.tagList)}"`);
+          allMatched = false;
+          break;
+        }
+      }
+
+      if (allMatched) {
+        matchingTargets.push(target);
+      }
+    }
+
+    return matchingTargets;
+  }
+
   removeTags(target: string, ...tagsToDelete: string[]): string[] {
     let tagsForTarget = this.data[target];
     if (!tagsForTarget) {
