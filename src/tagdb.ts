@@ -70,7 +70,6 @@ export class TagDb {
       let isMatch = allTagsMatched;
       if (itemType && itemType != taggedItem.itemType) {
         isMatch = false;
-        console.log(`itemType: ${itemType}, taggedItemType: ${taggedItem.itemType}`);
       }
 
       if (isMatch) {
