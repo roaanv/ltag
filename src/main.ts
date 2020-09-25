@@ -24,10 +24,10 @@ program.command('add <...tag>')
 
 program.command('list')
   .option('-v, --verbose')
-  .requiredOption('-i, --item <item>', 'The item to list the tags for')
+  .option('-i, --item <item>', 'The item to list the tags for')
   .action(async (cmdObj) => {
     app.setVerbose(cmdObj.verbose);
-    await app.listTagsForTarget(cmdObj.item);
+    await app.listTags(cmdObj.item);
   });
 
 program.command('find <...tag>')

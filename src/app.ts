@@ -44,14 +44,18 @@ export class App {
     console.log(existingTags);
   }
 
-  async listTagsForTarget(target: string): Promise<void> {
-    const targetPath = getFullPath(target);
-    const tagsForTarget = this.tagDb.getTags(targetPath);
-    console.log(tagsForTarget);
+  async listTags(target?: string): Promise<void> {
+    if (target) {
+      const targetPath = getFullPath(target);
+      const tagsForTarget = this.tagDb.getTagsForItem(targetPath);
+      console.log(tagsForTarget);
+    } else {
+      console.log(this.tagDb.getTags());
+    }
   }
 
   async findMatchingTags(tagList: string[]): Promise<void> {
-    const foundTags = this.tagDb.findMatchingTargets(...tagList);
+    const foundTags = this.tagDb.findMatchingItems(...tagList);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
     }

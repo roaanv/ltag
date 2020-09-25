@@ -22,29 +22,39 @@ export class TagDb {
     this.load();
   }
 
-  addTags(target: string, targetType: TargetType, ...newTagList:string[]) {
-    let tagsForTarget = this.data.taggedItems[target];
-    if (!tagsForTarget) {
-      tagsForTarget = {name: target, itemType: targetType, tagList:[]};
-      this.data.taggedItems[target] = tagsForTarget;
+  addTags(item: string, targetType: TargetType, ...newTagList:string[]) {
+    let tagsForItem = this.data.taggedItems[item];
+    if (!tagsForItem) {
+      tagsForItem = {name: item, itemType: targetType, tagList:[]};
+      this.data.taggedItems[item] = tagsForItem;
     }
 
-    tagsForTarget.tagList = [...new Set([...tagsForTarget.tagList, ...newTagList])]
+    tagsForItem.tagList = [...new Set([...tagsForItem.tagList, ...newTagList])]
     this.save();
 
-    return tagsForTarget.tagList;
+    return tagsForItem.tagList;
   }
 
-  getTags(target: string): string[] {
-    let tagsForTarget = this.data.taggedItems[target];
-    if (!tagsForTarget) {
+  getTagsForItem(item: string): string[] {
+    let tagsForItem = this.data.taggedItems[item];
+    if (!tagsForItem) {
       return [];
     }
 
-    return tagsForTarget.tagList;
+    return tagsForItem.tagList;
   }
 
-  findMatchingTargets(...tagsToFind: string[]): TaggedItem[] {
+  getTags(): string[] {
+    const tagList: string[] = [];
+
+    for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
+      tagList.push(...taggedItem.tagList);
+    }
+
+    return [...new Set(tagList)];
+  }
+
+  findMatchingItems(...tagsToFind: string[]): TaggedItem[] {
     const matchingItems: TaggedItem[] = [];
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
