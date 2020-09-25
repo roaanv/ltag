@@ -32,13 +32,25 @@ program.command('list')
 
 program.command('find <...tag>')
   .option('-v, --verbose')
+  .option('-t, --type <type>', 'Search for <file> or <dir>')
+  .option('-d, --dir', 'Search for directories')
   .action(async (firstTag, cmdObj, restTagList) => {
+    if (cmdObj.type) {
+      if (cmdObj.type != 'file' && cmdObj.type != 'dir') {
+        console.error(`Invalid type "${cmdObj.type}". Type can either be "file" or "dir"`);
+        process.exit(-3);
+      }
+
+      if (cmdObj.type == 'dir') {
+        cmdObj.type = "directory";
+      }
+    }
     app.setVerbose(cmdObj.verbose);
     const tagsToFind = [firstTag];
     if (restTagList) {
       tagsToFind.push(...restTagList);
     }
-    await app.findMatchingTags(tagsToFind);
+    await app.findMatchingTags(tagsToFind, cmdObj.type);
   });
 
 program.command('remove <...tag>')

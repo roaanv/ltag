@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import {match} from "assert";
 
 export type ItemType = 'directory' | 'file';
 
@@ -54,19 +55,25 @@ export class TagDb {
     return [...new Set(tagList)];
   }
 
-  findMatchingItems(...tagsToFind: string[]): TaggedItem[] {
+  findMatchingItems(tagsToFind: string[], itemType?: ItemType): TaggedItem[] {
     const matchingItems: TaggedItem[] = [];
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
-      let allMatched = true;
+      let allTagsMatched = true;
       for (let tagToFind of tagsToFind) {
         if (!taggedItem.tagList.includes(tagToFind)) {
-          allMatched = false;
+          allTagsMatched = false;
           break;
         }
       }
 
-      if (allMatched) {
+      let isMatch = allTagsMatched;
+      if (itemType && itemType != taggedItem.itemType) {
+        isMatch = false;
+        console.log(`itemType: ${itemType}, taggedItemType: ${taggedItem.itemType}`);
+      }
+
+      if (isMatch) {
         matchingItems.push(taggedItem);
       }
     }

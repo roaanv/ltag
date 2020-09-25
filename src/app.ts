@@ -54,8 +54,8 @@ export class App {
     }
   }
 
-  async findMatchingTags(tagList: string[]): Promise<void> {
-    const foundTags = this.tagDb.findMatchingItems(...tagList);
+  async findMatchingTags(tagList: string[], itemType?: ItemType): Promise<void> {
+    const foundTags = this.tagDb.findMatchingItems(tagList, itemType);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
     }
