@@ -1,5 +1,6 @@
 import path from "path";
 import * as fs from "fs";
+import fixedWidthString from "fixed-width-string";
 import {TagDb} from "./tagdb";
 import {FindOpts, ItemType} from "./model";
 
@@ -55,14 +56,18 @@ export class App {
     }
   }
 
-  async findMatchingTags(tagList: string[], findOpts: FindOpts): Promise<void> {
+  async findMatchingTags(tagList: string[], findOpts: FindOpts, verbose: boolean = false): Promise<void> {
     const foundTags = this.tagDb.findMatchingItems(tagList, findOpts);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
     }
 
-    console.log(`Found matches`);
-    console.log(JSON.stringify(foundTags, null, 2));
+    if (verbose) {
+      console.log(`Found matches`);
+      console.log(JSON.stringify(foundTags, null, 2));
+    } else {
+      foundTags.forEach(i => console.log(`${i.name}` + (i.itemType == 'file' ? '' : '/')));
+    }
   }
 
   async removeTags(item: string, tagList: string[]) {

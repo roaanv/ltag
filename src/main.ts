@@ -52,7 +52,7 @@ program.command('find <...tag>')
     if (restTagList) {
       tagsToFind.push(...restTagList);
     }
-    await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type});
+    await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type}, cmdObj.verbose);
   });
 
 program.command('remove <...tag>')
