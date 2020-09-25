@@ -1,9 +1,9 @@
 import path from "path";
 import * as fs from "fs";
-import {TagDb, TargetType} from "./tagdb";
+import {TagDb, ItemType} from "./tagdb";
 
-function getFullPath(target: string): string {
-  return path.resolve(target);
+function getFullPath(item: string): string {
+  return path.resolve(item);
 }
 
 function getDbPath() {
@@ -21,34 +21,34 @@ export class App {
     this.verbose = verbose;
   }
 
-  async addTag(target: string, tagList: string[]): Promise<void> {
-    const targetPath = getFullPath(target);
-    if (!fs.existsSync(targetPath)) {
-      console.error(`${target} does not exist`);
+  async addTag(item: string, tagList: string[]): Promise<void> {
+    const itemPath = getFullPath(item);
+    if (!fs.existsSync(itemPath)) {
+      console.error(`${item} does not exist`);
       process.exit(-1);
     }
 
-    const targetInfo = fs.lstatSync(targetPath);
-    if (!targetInfo.isDirectory() && !targetInfo.isFile()) {
+    const itemInfo = fs.lstatSync(itemPath);
+    if (!itemInfo.isDirectory() && !itemInfo.isFile()) {
       console.error(`Cannot handle this type of item`);
       process.exit(-2);
 
     }
-    let targetType:TargetType = 'file';
-    if (targetInfo.isDirectory()) {
-      targetType = 'directory';
+    let itemType:ItemType = 'file';
+    if (itemInfo.isDirectory()) {
+      itemType = 'directory';
     }
 
-    const existingTags = this.tagDb.addTags(targetPath, targetType, ...tagList);
-    console.log(`Tags on ${target}`);
+    const existingTags = this.tagDb.addTags(itemPath, itemType, ...tagList);
+    console.log(`Tags on ${item}`);
     console.log(existingTags);
   }
 
-  async listTags(target?: string): Promise<void> {
-    if (target) {
-      const targetPath = getFullPath(target);
-      const tagsForTarget = this.tagDb.getTagsForItem(targetPath);
-      console.log(tagsForTarget);
+  async listTags(item?: string): Promise<void> {
+    if (item) {
+      const itemPath = getFullPath(item);
+      const tagsForItem = this.tagDb.getTagsForItem(itemPath);
+      console.log(tagsForItem);
     } else {
       console.log(this.tagDb.getTags());
     }

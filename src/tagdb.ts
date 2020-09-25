@@ -1,10 +1,10 @@
 import * as fs from "fs";
 
-export type TargetType = 'directory' | 'file';
+export type ItemType = 'directory' | 'file';
 
 interface TaggedItem {
   name: string;
-  itemType: TargetType;
+  itemType: ItemType;
   tagList: string[];
 }
 
@@ -22,10 +22,10 @@ export class TagDb {
     this.load();
   }
 
-  addTags(item: string, targetType: TargetType, ...newTagList:string[]) {
+  addTags(item: string, itemType: ItemType, ...newTagList:string[]) {
     let tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
-      tagsForItem = {name: item, itemType: targetType, tagList:[]};
+      tagsForItem = {name: item, itemType: itemType, tagList:[]};
       this.data.taggedItems[item] = tagsForItem;
     }
 
@@ -74,16 +74,16 @@ export class TagDb {
     return matchingItems;
   }
 
-  removeTags(target: string, ...tagsToDelete: string[]): string[] {
-    let tagsForTarget = this.data.taggedItems[target];
-    if (!tagsForTarget) {
+  removeTags(item: string, ...tagsToDelete: string[]): string[] {
+    let tagsForItem = this.data.taggedItems[item];
+    if (!tagsForItem) {
       return [];
     }
 
-    tagsForTarget.tagList = tagsForTarget.tagList.filter((i) => !tagsToDelete.includes(i));
+    tagsForItem.tagList = tagsForItem.tagList.filter((i) => !tagsToDelete.includes(i));
 
     this.save();
-    return tagsForTarget.tagList;
+    return tagsForItem.tagList;
   }
 
   private save() {
@@ -103,8 +103,8 @@ export class TagDb {
     // Ensure tags are unique as someone might have
     // edited the physical file
     const items = loadedData.taggedItems;
-    for (let target of Object.keys(items)) {
-      const taggedItem = items[target];
+    for (let item of Object.keys(items)) {
+      const taggedItem = items[item];
       const uniqueTags:Set<string> = new Set([...taggedItem.tagList]);
       taggedItem.tagList = [...uniqueTags];
     }
