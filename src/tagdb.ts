@@ -55,7 +55,7 @@ export class TagDb {
     return [...new Set(tagList)];
   }
 
-  findMatchingItems(tagsToFind: string[], itemType?: ItemType): TaggedItem[] {
+  findMatchingItems(tagsToFind: string[], itemType?: ItemType, searchSubString?: string): TaggedItem[] {
     const matchingItems: TaggedItem[] = [];
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
@@ -70,6 +70,12 @@ export class TagDb {
       let isMatch = allTagsMatched;
       if (itemType && itemType != taggedItem.itemType) {
         isMatch = false;
+      }
+
+      if (searchSubString) {
+        if (!taggedItem.name.toUpperCase().includes(searchSubString.toUpperCase())) {
+          isMatch = false;
+        }
       }
 
       if (isMatch) {
