@@ -1,7 +1,5 @@
 import * as fs from "fs";
-import {match} from "assert";
-
-export type ItemType = 'directory' | 'file';
+import {FindOpts, ItemType} from "./model";
 
 interface TaggedItem {
   name: string;
@@ -55,15 +53,22 @@ export class TagDb {
     return [...new Set(tagList)];
   }
 
-  findMatchingItems(tagsToFind: string[], itemType?: ItemType, searchSubString?: string): TaggedItem[] {
+  findMatchingItems(tagsToFind: string[], {itemType, nameSubstring, tagSubstring}: FindOpts): TaggedItem[] {
     const matchingItems: TaggedItem[] = [];
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
       let allTagsMatched = true;
       for (let tagToFind of tagsToFind) {
         if (!taggedItem.tagList.includes(tagToFind)) {
-          allTagsMatched = false;
-          break;
+          if (tagSubstring) {
+            if (!taggedItem.tagList.find(i => i.includes(tagToFind))) {
+              allTagsMatched = false;
+              break;
+            }
+          } else {
+            allTagsMatched = false;
+            break;
+          }
         }
       }
 
@@ -72,8 +77,8 @@ export class TagDb {
         isMatch = false;
       }
 
-      if (searchSubString) {
-        if (!taggedItem.name.toUpperCase().includes(searchSubString.toUpperCase())) {
+      if (nameSubstring) {
+        if (!taggedItem.name.toUpperCase().includes(nameSubstring.toUpperCase())) {
           isMatch = false;
         }
       }

@@ -1,6 +1,7 @@
 import path from "path";
 import * as fs from "fs";
-import {TagDb, ItemType} from "./tagdb";
+import {TagDb} from "./tagdb";
+import {FindOpts, ItemType} from "./model";
 
 function getFullPath(item: string): string {
   return path.resolve(item);
@@ -54,8 +55,8 @@ export class App {
     }
   }
 
-  async findMatchingTags(tagList: string[], itemType?: ItemType, searchSubString?: string): Promise<void> {
-    const foundTags = this.tagDb.findMatchingItems(tagList, itemType, searchSubString);
+  async findMatchingTags(tagList: string[], findOpts: FindOpts): Promise<void> {
+    const foundTags = this.tagDb.findMatchingItems(tagList, findOpts);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
     }

@@ -35,6 +35,7 @@ program.command('find <...tag>')
   .option('-t, --type <type>', 'Search for <file> or <dir>')
   .option('-d, --dir', 'Search for directories')
   .option('-s, --substring <text>', 'Item must have substring')
+  .option('-p, --partial', "Partial (substring) match on tags")
   .action(async (firstTag, cmdObj, restTagList) => {
     if (cmdObj.type) {
       if (cmdObj.type != 'file' && cmdObj.type != 'dir') {
@@ -51,7 +52,7 @@ program.command('find <...tag>')
     if (restTagList) {
       tagsToFind.push(...restTagList);
     }
-    await app.findMatchingTags(tagsToFind, cmdObj.type, cmdObj.substring);
+    await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type});
   });
 
 program.command('remove <...tag>')
