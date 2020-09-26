@@ -12,6 +12,10 @@ function getDbPath() {
   return "/var/tmp/ltag.json";
 }
 
+function jsonToString(obj: any) {
+  return JSON.stringify(obj, null, 2);
+}
+
 export class App {
   private tagDb: TagDb;
   private verbose: boolean = false;
@@ -46,25 +50,35 @@ export class App {
     console.log(existingTags);
   }
 
-  async listTags(item?: string): Promise<void> {
-    if (item) {
-      const itemPath = getFullPath(item);
-      const tagsForItem = this.tagDb.getTagsForItem(itemPath);
-      console.log(tagsForItem);
+  async showTags(item: string): Promise<void> {
+    const tagList = this.tagDb.getTagsForItem(getFullPath(item));
+    if (this.verbose) {
+      console.log(jsonToString(tagList));
     } else {
-      console.log(this.tagDb.getTags());
+      tagList.forEach(i => console.log(i));
+    }
+
+
+  }
+
+  async listTags(): Promise<void> {
+    const tagList = this.tagDb.getTags();
+    if (this.verbose) {
+      console.log(jsonToString(tagList));
+    } else {
+      Object.keys(tagList).forEach(t => console.log(t));
     }
   }
 
-  async findMatchingTags(tagList: string[], findOpts: FindOpts, verbose: boolean = false): Promise<void> {
+  async findMatchingTags(tagList: string[], findOpts: FindOpts): Promise<void> {
     const foundTags = this.tagDb.findMatchingItems(tagList, findOpts);
     if (!foundTags || foundTags.length == 0) {
       console.log(`No matches found for tags`);
     }
 
-    if (verbose) {
+    if (this.verbose) {
       console.log(`Found matches`);
-      console.log(JSON.stringify(foundTags, null, 2));
+      console.log(jsonToString(foundTags));
     } else {
       foundTags.forEach(i => console.log(`${i.name}` + (i.itemType == 'file' ? '' : '/')));
     }

@@ -22,12 +22,18 @@ program.command('add <...tag>')
     await app.addTag(cmdObj.item, getArgs(firstTag, restTagList))
   });
 
+program.command('show <item>')
+  .option('-v, --verbose')
+  .action(async (item, cmdObj) => {
+    app.setVerbose(cmdObj.verbose);
+    await app.showTags(item);
+  });
+
 program.command('list')
   .option('-v, --verbose')
-  .option('-i, --item <item>', 'The item to list the tags for')
   .action(async (cmdObj) => {
     app.setVerbose(cmdObj.verbose);
-    await app.listTags(cmdObj.item);
+    await app.listTags();
   });
 
 program.command('find <...tag>')
@@ -52,7 +58,7 @@ program.command('find <...tag>')
     if (restTagList) {
       tagsToFind.push(...restTagList);
     }
-    await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type}, cmdObj.verbose);
+    await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type});
   });
 
 program.command('remove <...tag>')

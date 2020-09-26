@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import {FindOpts, ItemType} from "./model";
+import {FindOpts, ItemType, TagUsage} from "./model";
 
 interface TaggedItem {
   name: string;
@@ -43,14 +43,22 @@ export class TagDb {
     return tagsForItem.tagList;
   }
 
-  getTags(): string[] {
-    const tagList: string[] = [];
+  getTags(): TagUsage {
+    const tagList: TagUsage = {};
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
-      tagList.push(...taggedItem.tagList);
+      for (let tag of taggedItem.tagList) {
+        let tagUsage = tagList[tag];
+        if (!tagUsage) {
+          tagUsage = [];
+          tagList[tag] = tagUsage;
+        }
+
+        tagUsage.push({itemName: taggedItem.name, itemType: taggedItem.itemType});
+      }
     }
 
-    return [...new Set(tagList)];
+    return tagList;
   }
 
   findMatchingItems(tagsToFind: string[], {itemType, nameSubstring, tagSubstring}: FindOpts): TaggedItem[] {
