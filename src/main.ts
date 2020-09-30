@@ -31,12 +31,13 @@ program.command('show <item>')
 
 program.command('list')
   .option('-v, --verbose')
+  .option('-f, --filter <filter...>', "Substring filter of tags")
   .action(async (cmdObj) => {
     app.setVerbose(cmdObj.verbose);
-    await app.listTags();
+    await app.listTags(cmdObj.filter);
   });
 
-program.command('find <...tag>')
+program.command('find <tag...>')
   .option('-v, --verbose')
   .option('-t, --type <type>', 'Search for <file> or <dir>')
   .option('-d, --dir', 'Search for directories')
@@ -61,7 +62,7 @@ program.command('find <...tag>')
     await app.findMatchingTags(tagsToFind, {tagSubstring: cmdObj.partial, nameSubstring:cmdObj.substring, itemType: cmdObj.type});
   });
 
-program.command('remove <...tag>')
+program.command('remove <tag...>')
   .option('-v, --verbose')
   .requiredOption('-i, --item <item>', 'The item to remove the tags from')
   .action(async (firstTag, cmdObj, restTagList) => {

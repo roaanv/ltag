@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import {FindOpts, ItemType, TagUsage} from "./model";
+import path from "path";
 
 interface TaggedItem {
   name: string;
@@ -16,8 +17,14 @@ const SCHEMA_VERSION = 1;
 
 export class TagDb {
   private data: DbSchema = {version: SCHEMA_VERSION, taggedItems:{}};
+  private dbFullPath: string;
 
-  constructor(private dbPath: string) {
+  constructor(dbPath: string, dbFile: string) {
+    if (!fs.existsSync(dbPath)) {
+      fs.mkdirSync(dbPath, {recursive: true});
+    }
+
+    this.dbFullPath = path.join(dbPath, dbFile);
     this.load();
   }
 
@@ -43,11 +50,17 @@ export class TagDb {
     return tagsForItem.tagList;
   }
 
-  getTags(): TagUsage {
+  getTags(filterList: string[]): TagUsage {
     const tagList: TagUsage = {};
 
     for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
       for (let tag of taggedItem.tagList) {
+        if (filterList && filterList.length > 0) {
+          const tagUpper = tag.toUpperCase();
+          if (filterList.filter(f => tagUpper.includes(f.toUpperCase())).length == 0) {
+            continue;
+          }
+        }
         let tagUsage = tagList[tag];
         if (!tagUsage) {
           tagUsage = [];
@@ -112,15 +125,15 @@ export class TagDb {
   }
 
   private save() {
-    fs.writeFileSync(this.dbPath, JSON.stringify(this.data, null, 2));
+    fs.writeFileSync(this.dbFullPath, JSON.stringify(this.data, null, 2));
   }
 
   private load() {
-    if (!fs.existsSync(this.dbPath)) {
+    if (!fs.existsSync(this.dbFullPath)) {
       this.data = {version: SCHEMA_VERSION, taggedItems:{}};
       return;
     }
-    const loadedData:DbSchema = JSON.parse(fs.readFileSync(this.dbPath, 'utf8'));
+    const loadedData:DbSchema = JSON.parse(fs.readFileSync(this.dbFullPath, 'utf8'));
     if (!loadedData.version || loadedData.version != SCHEMA_VERSION) {
       throw new Error(`Cannot handle data file of version ${loadedData.version}`);
     }

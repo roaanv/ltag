@@ -1,15 +1,19 @@
 import path from "path";
 import * as fs from "fs";
-import fixedWidthString from "fixed-width-string";
 import {TagDb} from "./tagdb";
 import {FindOpts, ItemType} from "./model";
+import * as os from "os";
 
 function getFullPath(item: string): string {
   return path.resolve(item);
 }
 
 function getDbPath() {
-  return "/var/tmp/ltag.json";
+  return path.join(os.homedir(), ".config", "ltag");
+}
+
+function getDbFile() {
+  return "ltag.dat";
 }
 
 function jsonToString(obj: any) {
@@ -20,7 +24,7 @@ export class App {
   private tagDb: TagDb;
   private verbose: boolean = false;
   constructor() {
-    this.tagDb = new TagDb(getDbPath());
+    this.tagDb = new TagDb(getDbPath(), getDbFile());
   }
 
   setVerbose(verbose: boolean) {
@@ -61,8 +65,8 @@ export class App {
 
   }
 
-  async listTags(): Promise<void> {
-    const tagList = this.tagDb.getTags();
+  async listTags(filterList: string[]): Promise<void> {
+    const tagList = this.tagDb.getTags(filterList);
     if (this.verbose) {
       console.log(jsonToString(tagList));
     } else {
