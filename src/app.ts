@@ -89,7 +89,7 @@ export class App {
   }
 
   async removeTags(item: string, tagList: string[]) {
-    const remainingTags = this.tagDb.removeTags(getFullPath(item), ...tagList);
+    const remainingTags = this.tagDb.removeTags(getFullPath(item), tagList);
     console.log(`Remaining tags: ${remainingTags}`);
   }
 }
