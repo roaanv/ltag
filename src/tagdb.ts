@@ -112,13 +112,16 @@ export class TagDb {
     return matchingItems;
   }
 
-  removeTags(item: string, ...tagsToDelete: string[]): string[] {
+  removeTags(item: string, tagsToDelete: string[]): string[] {
     let tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
       return [];
     }
 
     tagsForItem.tagList = tagsForItem.tagList.filter((i) => !tagsToDelete.includes(i));
+    if (tagsForItem.tagList.length == 0) {
+      delete this.data.taggedItems[item];
+    }
 
     this.save();
     return tagsForItem.tagList;
