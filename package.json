@@ -19,13 +19,16 @@
     "validate": "tsc --noEmit",
     "run": "ts-node src/main.ts"
   },
+  "keywords": [],
+  "author": "Roaan Vos",
+  "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/roaanv/ltag"
+    "url": "git+https://github.com/roaanv/ltag.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roaanv/ltag/issues"
+  },
   "dependencies": {
     "commander": "^6.1.0",
     "fixed-width-string": "^2.0.0"
