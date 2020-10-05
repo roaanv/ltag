@@ -1,6 +1,6 @@
 {
   "name": "@roaanv/ltag",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This is the service under test",
   "main": "dist/ltag.js",
   "bin": {
