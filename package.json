@@ -2,7 +2,8 @@
   "name": "@roaanv/ltag",
   "version": "0.0.2",
   "description": "This is the service under test",
-  "main": "dist/ltag.js",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "bin": {
     "ltag": "./dist/main.js"
   },
