@@ -8,7 +8,7 @@ ltag --help
 ```
 
 # Install
-ltag is a node.js commandline application and is thus installed using npm
+ltag is a node.js commandline and requires node and npm to be installed.
 ```bash
 npm install -g @roaanv/ltag
 ```
