@@ -4,15 +4,24 @@
   "description": "This is the service under test",
   "main": "dist/ltag.js",
   "bin": {
-    "ltag": "./bin/ltag"
+    "ltag": "./dist/main.js"
   },
   "scripts": {
-    "lint": "",
-    "build": "webpack && chmod u+x ./bin/ltag",
-    "tsc-build": "tsc",
+    "test": "jest",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags",
     "validate": "tsc --noEmit",
-    "run": "ts-node src/main.ts",
-    "test": "jest"
+    "run": "ts-node src/main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roaanv/ltag"
   },
   "keywords": [],
   "author": "",
@@ -24,14 +33,17 @@
   "devDependencies": {
     "@types/jest": "^26.0.14",
     "@types/node": "^14.11.1",
-    "@types/webpack": "^4.41.22",
     "jest": "^26.4.2",
+    "prettier": "^2.1.2",
     "ts-jest": "^26.4.0",
     "ts-loader": "^8.0.4",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0-pre.62",
-    "typescript": "^4.0.3",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12"
-  }
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.0.3"
+  },
+  "files": [
+    "dist/**/*"
+  ]
 }

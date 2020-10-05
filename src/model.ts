@@ -11,4 +11,4 @@ export interface ItemDetail {
   itemType: ItemType;
 }
 
-export type TagUsage = {[tag:string]: ItemDetail[]};
+export type TagUsage = { [tag: string]: ItemDetail[] };

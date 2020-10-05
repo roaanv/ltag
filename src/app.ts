@@ -1,19 +1,19 @@
-import path from "path";
-import * as fs from "fs";
-import {TagDb} from "./tagdb";
-import {FindOpts, ItemType} from "./model";
-import * as os from "os";
+import path from 'path';
+import * as fs from 'fs';
+import { TagDb } from './tagdb';
+import { FindOpts, ItemType } from './model';
+import * as os from 'os';
 
 function getFullPath(item: string): string {
   return path.resolve(item);
 }
 
 function getDbPath() {
-  return path.join(os.homedir(), ".config", "ltag");
+  return path.join(os.homedir(), '.config', 'ltag');
 }
 
 function getDbFile() {
-  return "ltag.dat";
+  return 'ltag.dat';
 }
 
 function jsonToString(obj: any) {
@@ -42,9 +42,8 @@ export class App {
     if (!itemInfo.isDirectory() && !itemInfo.isFile()) {
       console.error(`Cannot handle this type of item`);
       process.exit(-2);
-
     }
-    let itemType:ItemType = 'file';
+    let itemType: ItemType = 'file';
     if (itemInfo.isDirectory()) {
       itemType = 'directory';
     }
@@ -59,10 +58,8 @@ export class App {
     if (this.verbose) {
       console.log(jsonToString(tagList));
     } else {
-      tagList.forEach(i => console.log(i));
+      tagList.forEach((i) => console.log(i));
     }
-
-
   }
 
   async listTags(filterList: string[]): Promise<void> {
@@ -70,13 +67,13 @@ export class App {
     if (this.verbose) {
       console.log(jsonToString(tagList));
     } else {
-      Object.keys(tagList).forEach(t => console.log(t));
+      Object.keys(tagList).forEach((t) => console.log(t));
     }
   }
 
   async findMatchingTags(tagList: string[], findOpts: FindOpts): Promise<void> {
     const foundTags = this.tagDb.findMatchingItems(tagList, findOpts);
-    if (!foundTags || foundTags.length == 0) {
+    if (!foundTags || foundTags.length === 0) {
       console.log(`No matches found for tags`);
     }
 
@@ -84,7 +81,7 @@ export class App {
       console.log(`Found matches`);
       console.log(jsonToString(foundTags));
     } else {
-      foundTags.forEach(i => console.log(`${i.name}` + (i.itemType == 'file' ? '' : '/')));
+      foundTags.forEach((i) => console.log(`${i.name}` + (i.itemType === 'file' ? '' : '/')));
     }
   }
 
@@ -93,4 +90,3 @@ export class App {
     console.log(`Remaining tags: ${remainingTags}`);
   }
 }
-

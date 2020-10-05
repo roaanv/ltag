@@ -3,7 +3,7 @@
     "strict" : true,
     "module": "commonjs",
     "target": "es2017",
-    "outDir": "./out",
+    "outDir": "./dist",
     "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -13,5 +13,6 @@
     "baseUrl": "./",
     "allowJs": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "**/__tests__/*"]
 }

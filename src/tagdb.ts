@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import {FindOpts, ItemType, TagUsage} from "./model";
-import path from "path";
+import * as fs from 'fs';
+import { FindOpts, ItemType, TagUsage } from './model';
+import path from 'path';
 
 interface TaggedItem {
   name: string;
@@ -10,39 +10,39 @@ interface TaggedItem {
 
 interface DbSchema {
   version: number;
-  taggedItems: {[name: string]: TaggedItem};
+  taggedItems: { [name: string]: TaggedItem };
 }
 
 const SCHEMA_VERSION = 1;
 
 export class TagDb {
-  private data: DbSchema = {version: SCHEMA_VERSION, taggedItems:{}};
+  private data: DbSchema = { version: SCHEMA_VERSION, taggedItems: {} };
   private dbFullPath: string;
 
   constructor(dbPath: string, dbFile: string) {
     if (!fs.existsSync(dbPath)) {
-      fs.mkdirSync(dbPath, {recursive: true});
+      fs.mkdirSync(dbPath, { recursive: true });
     }
 
     this.dbFullPath = path.join(dbPath, dbFile);
     this.load();
   }
 
-  addTags(item: string, itemType: ItemType, ...newTagList:string[]) {
+  addTags(item: string, itemType: ItemType, ...newTagList: string[]) {
     let tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
-      tagsForItem = {name: item, itemType: itemType, tagList:[]};
+      tagsForItem = { name: item, itemType, tagList: [] };
       this.data.taggedItems[item] = tagsForItem;
     }
 
-    tagsForItem.tagList = [...new Set([...tagsForItem.tagList, ...newTagList])]
+    tagsForItem.tagList = [...new Set([...tagsForItem.tagList, ...newTagList])];
     this.save();
 
     return tagsForItem.tagList;
   }
 
   getTagsForItem(item: string): string[] {
-    let tagsForItem = this.data.taggedItems[item];
+    const tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
       return [];
     }
@@ -53,11 +53,11 @@ export class TagDb {
   getTags(filterList: string[]): TagUsage {
     const tagList: TagUsage = {};
 
-    for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
-      for (let tag of taggedItem.tagList) {
+    for (const [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
+      for (const tag of taggedItem.tagList) {
         if (filterList && filterList.length > 0) {
           const tagUpper = tag.toUpperCase();
-          if (filterList.filter(f => tagUpper.includes(f.toUpperCase())).length == 0) {
+          if (filterList.filter((f) => tagUpper.includes(f.toUpperCase())).length === 0) {
             continue;
           }
         }
@@ -67,22 +67,22 @@ export class TagDb {
           tagList[tag] = tagUsage;
         }
 
-        tagUsage.push({itemName: taggedItem.name, itemType: taggedItem.itemType});
+        tagUsage.push({ itemName: taggedItem.name, itemType: taggedItem.itemType });
       }
     }
 
     return tagList;
   }
 
-  findMatchingItems(tagsToFind: string[], {itemType, nameSubstring, tagSubstring}: FindOpts): TaggedItem[] {
+  findMatchingItems(tagsToFind: string[], { itemType, nameSubstring, tagSubstring }: FindOpts): TaggedItem[] {
     const matchingItems: TaggedItem[] = [];
 
-    for (let [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
+    for (const [itemName, taggedItem] of Object.entries(this.data.taggedItems)) {
       let allTagsMatched = true;
-      for (let tagToFind of tagsToFind) {
+      for (const tagToFind of tagsToFind) {
         if (!taggedItem.tagList.includes(tagToFind)) {
           if (tagSubstring) {
-            if (!taggedItem.tagList.find(i => i.includes(tagToFind))) {
+            if (!taggedItem.tagList.find((i) => i.includes(tagToFind))) {
               allTagsMatched = false;
               break;
             }
@@ -94,7 +94,7 @@ export class TagDb {
       }
 
       let isMatch = allTagsMatched;
-      if (itemType && itemType != taggedItem.itemType) {
+      if (itemType && itemType !== taggedItem.itemType) {
         isMatch = false;
       }
 
@@ -113,13 +113,13 @@ export class TagDb {
   }
 
   removeTags(item: string, tagsToDelete: string[]): string[] {
-    let tagsForItem = this.data.taggedItems[item];
+    const tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
       return [];
     }
 
     tagsForItem.tagList = tagsForItem.tagList.filter((i) => !tagsToDelete.includes(i));
-    if (tagsForItem.tagList.length == 0) {
+    if (tagsForItem.tagList.length === 0) {
       delete this.data.taggedItems[item];
     }
 
@@ -133,20 +133,20 @@ export class TagDb {
 
   private load() {
     if (!fs.existsSync(this.dbFullPath)) {
-      this.data = {version: SCHEMA_VERSION, taggedItems:{}};
+      this.data = { version: SCHEMA_VERSION, taggedItems: {} };
       return;
     }
-    const loadedData:DbSchema = JSON.parse(fs.readFileSync(this.dbFullPath, 'utf8'));
-    if (!loadedData.version || loadedData.version != SCHEMA_VERSION) {
+    const loadedData: DbSchema = JSON.parse(fs.readFileSync(this.dbFullPath, 'utf8'));
+    if (!loadedData.version || loadedData.version !== SCHEMA_VERSION) {
       throw new Error(`Cannot handle data file of version ${loadedData.version}`);
     }
 
     // Ensure tags are unique as someone might have
     // edited the physical file
     const items = loadedData.taggedItems;
-    for (let item of Object.keys(items)) {
+    for (const item of Object.keys(items)) {
       const taggedItem = items[item];
-      const uniqueTags:Set<string> = new Set([...taggedItem.tagList]);
+      const uniqueTags: Set<string> = new Set([...taggedItem.tagList]);
       taggedItem.tagList = [...uniqueTags];
     }
 
