@@ -37,7 +37,7 @@ program
   .option('-v, --verbose')
   .option('-t, --type <type>', 'Search for <file> or <dir>')
   .option('-d, --dir', 'Search for directories')
-  .option('-s, --substring <text>', 'Item must have substring')
+  .option('-i, --item-substring <text>', 'Item must have substring')
   .option('-p, --partial', 'Partial (substring) match on tags')
   .action(async (tagsToFind, cmdObj) => {
     if (cmdObj.type) {
@@ -53,7 +53,7 @@ program
     app.setVerbose(cmdObj.verbose);
     await app.findMatchingTags(tagsToFind, {
       tagSubstring: cmdObj.partial,
-      nameSubstring: cmdObj.substring,
+      nameSubstring: cmdObj.itemSubstring,
       itemType: cmdObj.type,
     });
   });
