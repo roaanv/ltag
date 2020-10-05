@@ -7,6 +7,7 @@ const program = new Command('ltag');
 
 program
   .command('add <tag...>')
+  .description('add tags to an item')
   .requiredOption('-i, --item <item>', 'The item to tag')
   .option('-v, --verbose')
   .action(async (tagList, cmdObj) => {
@@ -17,6 +18,7 @@ program
 
 program
   .command('show <item>')
+  .description('show the tags for an item')
   .option('-v, --verbose')
   .action(async (item, cmdObj) => {
     app.setVerbose(cmdObj.verbose);
@@ -25,6 +27,7 @@ program
 
 program
   .command('list')
+  .description('list all the tags')
   .option('-v, --verbose')
   .option('-f, --filter <filter...>', 'Substring filter of tags')
   .action(async (cmdObj) => {
@@ -34,6 +37,7 @@ program
 
 program
   .command('find <tag...>')
+  .description('find items that have all the specified tags')
   .option('-v, --verbose')
   .option('-t, --type <type>', 'Search for <file> or <dir>')
   .option('-d, --dir', 'Search for directories')
@@ -60,6 +64,7 @@ program
 
 program
   .command('remove <tag...>')
+  .description('remove tags from item')
   .option('-v, --verbose')
   .requiredOption('-i, --item <item>', 'The item to remove the tags from')
   .action(async (tagList, cmdObj) => {
