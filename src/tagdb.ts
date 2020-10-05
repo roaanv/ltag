@@ -28,7 +28,7 @@ export class TagDb {
     this.load();
   }
 
-  addTags(item: string, itemType: ItemType, ...newTagList: string[]) {
+  addTags(item: string, itemType: ItemType, newTagList: string[]) {
     let tagsForItem = this.data.taggedItems[item];
     if (!tagsForItem) {
       tagsForItem = { name: item, itemType, tagList: [] };

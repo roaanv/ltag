@@ -55,7 +55,7 @@ describe("add", () => {
   test ("Adding tag to new item creates new item with tag", () => {
     const itemToTest = 'some-test-item';
     const tagToTest = 'new-tag';
-    db.addTags(itemToTest, "directory", tagToTest);
+    db.addTags(itemToTest, "directory", [tagToTest]);
 
     const dbRaw = readDataFromDbFile();
     const taggedItem = dbRaw.taggedItems[itemToTest]
@@ -66,11 +66,26 @@ describe("add", () => {
     expect(tagList).toContain(tagToTest);
   });
 
+  test ("Adding multiple tags to new item creates new item with all the tags", () => {
+    const itemToTest = 'some-test-item';
+    const tagToTest1 = 'new-tag';
+    const tagToTest2 = 'new-tag2';
+    db.addTags(itemToTest, "directory", [tagToTest1, tagToTest2]);
+
+    const dbRaw = readDataFromDbFile();
+    const taggedItem = dbRaw.taggedItems[itemToTest]
+    expect(taggedItem).toBeDefined();
+
+    const tagList = taggedItem.tagList;
+    expect(tagList.length).toEqual(2);
+    expect(tagList).toEqual(expect.arrayContaining([tagToTest1, tagToTest2]))
+  });
+
   test ("Adding tag to existing item adds to the items tags", () => {
     const itemToTest = '/another-place/item-2020';
     const tagToTest = 'new-tag';
     const existingTag = 'presentation';
-    db.addTags(itemToTest, "directory", tagToTest);
+    db.addTags(itemToTest, "directory", [tagToTest]);
 
     const dbRaw = readDataFromDbFile();
     const taggedItem = dbRaw.taggedItems[itemToTest]

@@ -5,23 +5,14 @@ import { Command } from 'commander';
 const app = new App();
 const program = new Command('ltag');
 
-function getArgs(firstArg: string, restArgs?: string[]) {
-  const allArgs = [firstArg];
-  if (restArgs) {
-    allArgs.push(...restArgs);
-  }
-
-  return allArgs;
-}
-
 program
-  .command('add <...tag>')
+  .command('add <tag...>')
   .requiredOption('-i, --item <item>', 'The item to tag')
   .option('-v, --verbose')
-  .action(async (firstTag, cmdObj, restTagList) => {
+  .action(async (tagList, cmdObj) => {
     app.setVerbose(cmdObj.verbose);
 
-    await app.addTag(cmdObj.item, getArgs(firstTag, restTagList));
+    await app.addTag(cmdObj.item, tagList);
   });
 
 program
@@ -48,7 +39,7 @@ program
   .option('-d, --dir', 'Search for directories')
   .option('-s, --substring <text>', 'Item must have substring')
   .option('-p, --partial', 'Partial (substring) match on tags')
-  .action(async (firstTag, cmdObj, restTagList) => {
+  .action(async (tagsToFind, cmdObj) => {
     if (cmdObj.type) {
       if (cmdObj.type !== 'file' && cmdObj.type !== 'dir') {
         console.error(`Invalid type "${cmdObj.type}". Type can either be "file" or "dir"`);
@@ -60,10 +51,6 @@ program
       }
     }
     app.setVerbose(cmdObj.verbose);
-    const tagsToFind = [firstTag];
-    if (restTagList) {
-      tagsToFind.push(...restTagList);
-    }
     await app.findMatchingTags(tagsToFind, {
       tagSubstring: cmdObj.partial,
       nameSubstring: cmdObj.substring,
@@ -75,9 +62,9 @@ program
   .command('remove <tag...>')
   .option('-v, --verbose')
   .requiredOption('-i, --item <item>', 'The item to remove the tags from')
-  .action(async (firstTag, cmdObj, restTagList) => {
+  .action(async (tagList, cmdObj) => {
     app.setVerbose(cmdObj.verbose);
-    await app.removeTags(cmdObj.item, getArgs(firstTag, restTagList));
+    await app.removeTags(cmdObj.item, tagList);
   });
 
 program.parseAsync(process.argv).catch((e) => console.log(e));

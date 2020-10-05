@@ -48,7 +48,7 @@ export class App {
       itemType = 'directory';
     }
 
-    const existingTags = this.tagDb.addTags(itemPath, itemType, ...tagList);
+    const existingTags = this.tagDb.addTags(itemPath, itemType, tagList);
     console.log(`Tags on ${item}`);
     console.log(existingTags);
   }
